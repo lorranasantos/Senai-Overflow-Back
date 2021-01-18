@@ -7,20 +7,19 @@ class Student extends Model {
             {
                 //apenas campos que podemos alterar/inserir
                 ra: DataTypes.STRING,
-                nome: DataTypes.STRING,
+                name: DataTypes.STRING,
                 email:DataTypes.STRING,
-                senha:DataTypes.STRING
+                password:DataTypes.STRING
             },
             {
-                tableName: "tblalunos",
                 sequelize,
             }
         )
     }
     //aqui configuramos os relacionamentos
     static associate(models){
-        this.hasMany(models.Question, {foreignKey:"aluno_id"});
-        this.hasMany(models.Answer, {foreignKey:"student_id"});
+        this.hasMany(models.Question);
+        this.hasMany(models.Answer);
     }
 }
 module.exports = Student;

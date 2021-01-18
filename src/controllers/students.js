@@ -1,14 +1,14 @@
 const Student = require("../models/Student");
-const { findCreateFind } = require("../models/Student");
+// const { findCreateFind } = require("../models/Student");
 
 module.exports = {
 
     //função que vai ser executada pela rota
-     async listarAlunos (req, res){
+     async index (req, res){
 
         try{
-            const alunos = await Student.findAll();
-            res.send(alunos);
+            const student = await Student.findAll();
+            res.send(student);
         }
         catch(error){
             console.log(error);
@@ -16,27 +16,27 @@ module.exports = {
         }  
     },
 
-    async adicionarAlunos(req, res){  
+    async store(req, res){  
         //receber os dados do body
-        const {ra, nome, email, senha} = req.body;
+        const {ra, name, email, password} = req.body;
 
         try{
 
             //SELECT * FROM tblalunos WHERE  ra ? AND email - ?
-            let aluno = Student.findOne({
+            let student = Student.findOne({
                 where: {ra}
             })    
-            if(!aluno)
-                res.status(400).send({erro: "Aluno já cadastrado"});
+            if(!student)
+                res.status(400).send({error: "aluno já cadastrado"});
 
-            aluno = await Student.create({ra, nome, email, senha});
+            student = await Student.create({ra, name, email, password});
             /*implementar o último id
             const nextID = alunos.length > 0 ? alunos[alunos.length -1].id + 1: 1;*/    
             /*adicionar o aluno na lista
             alunos.push({id: nextID, ra, nome, email, senha });*/
         
             //retornando uma resposta de sucesso
-            res.status(201).send({id: aluno.id});
+            res.status(201).send({id: student.id});
         }
         catch(error){
             // console.log("erro");
@@ -45,18 +45,18 @@ module.exports = {
     
     },
     
-    async buscarAluno(req, res){
+    async find(req, res){
         //recuperar o id do aluno
-        const alunoID = req.params.id;
+        const studentId = req.params.id;
     
         /*buscar o aluno na lista
-        const aluno = alunos.find(a => a.id.toString() === alunoID);*/
-        let aluno = await Student.findByPk(alunoID, {
-            attributes:["id", "nome", "ra", "email"]
+        const aluno = alunos.find(a => a.id.toString() === studentId);*/
+        let student = await Student.findByPk(studentId, {
+            attributes:["id", "name", "ra", "email"]
         });
     
-        //se o aluno não for encontrado, retornar o not found
-        if(!aluno)
+        //se o student não for encontrado, retornar o not found
+        if(!student)
             return res.status(404).send({erro: "Aluno não encontrado"});
     
         //Se o aluno encontrado retornar o aluno
@@ -65,18 +65,18 @@ module.exports = {
         res.send(aluno);
     },
     
-    async deletarAluno(req, res){
+    async delete(req, res){
         //recuperar o id do aluno a ser deletado
-        const alunoID = req.params.id;
+        const studentId = req.params.id;
     
     
         /*retirar o aluno da lista
-        alunos = alunos.filter(a => a.id.toString() !== alunoID);*/
+        alunos = alunos.filter(a => a.id.toString() !== studentId);*/
         try{
-            let aluno = await Student.findByPk(alunoID);
-            if(!aluno)
-                return res.status(404).send({erro:"Aluno não encontrado"});
-            await aluno.destroy();
+            let student = await Student.findByPk(studentId);
+            if(!student)
+                return res.status(404).send({error:"aluno não encontrado"});
+            await student.destroy();
             
             res.status(200).send();
         }
@@ -89,33 +89,33 @@ module.exports = {
         res.status(204).send();
     },
     
-    async editarAluno(req, res){
+    async update(req, res){
         //recuperar o id do aluno a ser editado
-        const alunoID = req.params.id;
+        const studentId = req.params.id;
         
-        const {nome, email} = req.body;
+        const {name, email} = req.body;
         /*recuperar os dados do corpo
         fazer a alteração
         alunos = alunos.map(
-            a => a.id.toString() === alunoID ? {...a, nome, email} : a
+            a => a.id.toString() === studentId ? {...a, nome, email} : a
             );*/
         try{
                 console.log(1)
-                let aluno = await Student.findByPk(alunoID);
+                let student = await Student.findByPk(studentId);
                 
                 
 
 
-            if(!aluno)
-                res.status(404).send({erro:"Aluno não encontrado"});
+            if(!student)
+                res.status(404).send({error:"Aluno não encontrado"});
 
-            aluno.nome = nome;
-            aluno.email = email;
+            student.name = name;
+            student.email = email;
 
-            aluno.save();
+            student.save();
 
                 //devolver a resposta de sucesso
-            res.status(204).send(alunos);
+            res.status(204).send(student);
             
         }
         catch(error){

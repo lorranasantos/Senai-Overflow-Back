@@ -8,25 +8,25 @@ module.exports = {
 
     },
     async store(req, res) {
-        const { titulo, descricao, imagem, gist, categorias } = req.body;
+        const { title, description, image, gist, categories } = req.body;
 
-        const alunoId = req.headers.authorization;
+        const studentId = req.headers.authorization;
 
         try {
             // buscar o aluno pelo iD
-            let aluno = await Student.findByPk(alunoId);
+            let student = await Student.findByPk(studentId);
 
-            // se o aluno não existir , retorna erro
-            if (!aluno)
-                return res.status(400).send({ erro: "Aluno não encontrado" });
+            // se o student não existir , retorna erro
+            if (!student)
+                return res.status(400).send({ error: "aluno não encontrado" });
 
             // crio a pergunta para o aluno
-            let pergunta = await aluno.createQuestion({ titulo, descricao, imagem, gist});
+            let question = await student.createQuestion({ title, description, image, gist});
 
-            await pergunta.addCategories(categorias);
+            await question.addCategories(categories);
 
             // retorno sucesso
-            res.status(201).send(pergunta);
+            res.status(201).send(question);
         }
         catch (error) {
             console.log(error);
@@ -39,23 +39,29 @@ module.exports = {
     async update(req, res) {
         const questionId = req.params.id;
 
-        const{titulo, descricao} = req.body;
+        const{title, description} = req.body;
 
         const studentId = req.headers.authorization;
 
         try{
-            const question = await Question.findOne({
-                where: {
-                    aluno_id: studentId,
-                    id: questionId
-                }
-            });
+            // const question = await Question.findOne({
+            //     where: {
+            //         student_id: studentId,
+            //         id: questionId
+            //     }
+            // });
+
+            const question = await Question.findByPk(questionId);
 
             if(!question)
-                res.status(404).send({ erro: "Questão não encontrada"});
+            return res.status(404).send({ error: "Questão não encontrada"});
 
-            question.titulo = titulo;
-            question.descricao = descricao;
+
+            if(!question.studentId != studentId)
+                return res.status(404).send({ error: "Não autorizado"});
+   
+            question.title = title;
+            question.description = description;
             question.save();
             
             res.status(200).send("Pergunta atualizada com sucesso!");
@@ -72,13 +78,13 @@ module.exports = {
         try{
             const question = await Question.findOne({
                 where: {
-                    aluno_id: studentId,
+                    student_id: studentId,
                     id: questionId
                 }
             });
 
             if(!question)
-                res.status(404).send({ erro: "Questão não encontrada"});
+                res.status(404).send({ error: "Questão não encontrada"});
 
             await question.destroy();
 

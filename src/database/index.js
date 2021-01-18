@@ -8,17 +8,17 @@ const Category = require("../models/Category");
 const Answer = require("../models/Answer");
 const { Sequelize } = require("sequelize");
 
-const conexao = new Sequelize(dbconfig);
+const cennection = new Sequelize(dbconfig);
 
 //inicializa os models
-Student.init(conexao);
-Question.init(conexao);
-Category.init(conexao);
-Answer.init(conexao);
+Student.init(cennection);
+Question.init(cennection);
+Category.init(cennection);
+Answer.init(cennection);
 
 
 //inicializa os relacionamentos
-Student.associate(conexao.models);
-Question.associate(conexao.models);
-Category.associate(conexao.models);
-Answer.associate(conexao.models);
+Student.associate(cennection.models);
+Question.associate(cennection.models);
+Category.associate(cennection.models);
+Answer.associate(cennection.models);
