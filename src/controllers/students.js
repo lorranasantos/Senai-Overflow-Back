@@ -1,19 +1,14 @@
 const Student = require("../models/Student");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const auth = require("../config/auth.json");
+
 // const { findCreateFind } = require("../models/Student");
 
 module.exports = {
 
     //função que vai ser executada pela rota
      async index (req, res){
-
-        try{
-            const student = await Student.findAll();
-            res.send(student);
-        }
-        catch(error){
-            console.log(error);
-            res.status(500).send({error})
-        }  
     },
 
     async store(req, res){  
@@ -24,19 +19,32 @@ module.exports = {
 
             //SELECT * FROM tblalunos WHERE  ra ? AND email - ?
             let student = Student.findOne({
-                where: {ra}
+                where: {ra: ra, email: email}       
             })    
-            if(!student)
+            if(student)
                 res.status(400).send({error: "aluno já cadastrado"});
 
-            student = await Student.create({ra, name, email, password});
+                const passwordCrypt = bcrypt.hashSync(password);
+
+            student = await Student.create({ra, name, email, password: passwordCrypt});
+
+            const token = jwt.sign({studentId: student.id, studentName: student.name}, auth.secret);
+
             /*implementar o último id
             const nextID = alunos.length > 0 ? alunos[alunos.length -1].id + 1: 1;*/    
             /*adicionar o aluno na lista
             alunos.push({id: nextID, ra, nome, email, senha });*/
         
             //retornando uma resposta de sucesso
-            res.status(201).send({id: student.id});
+            res.status(201).send({
+                student:{
+                    studentId: student.id,
+                    name: student.name,
+                    ra: student.ra,
+                    email: student.email
+                },
+                token
+            });
         }
         catch(error){
             // console.log("erro");

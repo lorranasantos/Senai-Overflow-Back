@@ -9,7 +9,7 @@ module.exports = {
 
     async store(req, res){
         const {description} = req.body;
-        const studentId = req.headers.authorization;
+        const {studentId} = req;
         const questionId = req.params.id;
 
         try{

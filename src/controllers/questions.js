@@ -9,8 +9,7 @@ module.exports = {
     },
     async store(req, res) {
         const { title, description, image, gist, categories } = req.body;
-
-        const studentId = req.headers.authorization;
+        const {studentId} = req;
 
         try {
             // buscar o aluno pelo iD
@@ -41,7 +40,7 @@ module.exports = {
 
         const{title, description} = req.body;
 
-        const studentId = req.headers.authorization;
+        const {studentId} = req;
 
         try{
             // const question = await Question.findOne({
@@ -73,7 +72,7 @@ module.exports = {
     },
     async delete(req, res) {
         const questionId = req.params.id;
-        const studentId = req.headers.authorization;
+        const {studentId} = req;
 
         try{
             const question = await Question.findOne({
