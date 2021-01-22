@@ -1,7 +1,8 @@
 const express = require("express");
-const Multer = require("multer");
+
 
 const authMiddleware = require("./middleware/authorization");
+const uploadQuestions = require("./middleware/uploadQuestions");
 
 const studentController = require("./controllers/students");
 const questionController = require("./controllers/questions");
@@ -15,21 +16,18 @@ const answerValidator = require("./validators/answers");
 
 const routes = express.Router();
 
-const multer = Multer({
-    storage: Multer.diskStorage({
-        destination: "uploads/",
-        filename:(req, file, callback) =>{
-            const filename = Date.now() + "." + file.originalname.split(".").pop();
 
-           return callback(null,filename);
-        }
-    })
-});
-
-routes.post("/upload", multer.single("arquivo"), (req, res)=>{
-    console.log(req.file);
-    res.send(req.file);
-})
+// const upload = multer.single("arquivo");
+// routes.post("/upload", (req, res)=>{
+//    const handleError  = (error) => {
+//         if(error) {
+//             res.status(400).send({error: "Arquivo inválido"})
+//         }
+//         console.log(req.file);
+//         res.send(req.file);
+//     }
+//     upload(req, res, handleError); 
+// });
 
 //configuração da rota
 // Rotas PÚBLICAS
@@ -45,7 +43,11 @@ routes.delete("/students/:id", studentController.delete);
 routes.put("/students/:id", studentController.update);
 
 // ROTAS DE questions
-routes.post("/questions", questionValidator.create, questionController.store);
+routes.post("/questions", 
+    uploadQuestions, 
+    questionValidator.create,
+    questionController.store
+);
 routes.put("/questions/:id", questionController.update);
 routes.delete("/questions/:id", questionController.delete);
 

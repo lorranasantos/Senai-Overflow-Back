@@ -1,10 +1,9 @@
-
 //importar express
 const express = require("express");
 const { errors } = require("celebrate");
 
 //importar as rotas
-const routes  = require("./routes");
+const routes = require("./routes");
 
 require("./database");
 
@@ -12,6 +11,9 @@ require("./database");
 const app = express();
 
 app.use(express.json());
+
+// Definimos a pasta upload como pública, servindo arquivos estáticos.
+app.use("/uploads", express.static("uploads"));
 
 app.use(routes);
 
