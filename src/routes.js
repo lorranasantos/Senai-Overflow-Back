@@ -49,9 +49,9 @@ routes.delete("/students/:id", studentController.delete);
 routes.put("/students/:id", studentController.update);
 
 // ROTAS DE questions
-routes.post(
-  "/questions",
+routes.post("/questions",
   //   Multer.single("image"),
+  uploadQuestions,
   uploadImage,
   questionValidator.create,
   questionController.store

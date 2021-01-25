@@ -5,11 +5,12 @@ const Student = require("../models/Student");
 
 module.exports = {
   index(req, res) {},
+
   async store(req, res) {
-    const { title, description, image, gist, categories } = req.body;
+    const { title, description, gist, categories } = req.body;
 
     const categoriesArray = categories.split(",");
-    const { firebaseUrl } = req.file ? req.file : "";
+    // const {firebaseUrl}  = req.file ? req.file : "";
 
     const { studentId } = req;
 
@@ -25,8 +26,7 @@ module.exports = {
       let question = await student.createQuestion({
         title,
         description,
-        image: firebase,
-        // image: req.file.filename,
+        image: req.file.firebaseUrl,
         gist,
       });
 
@@ -39,7 +39,7 @@ module.exports = {
         description: question.description,
         created_at: question.created_at,
         gist: question.gist,
-        image: `http://localhost:3333/${req.file.path}`,
+        image: req.file.firebaseUrl,
       });
     } catch (error) {
       console.log(error);
