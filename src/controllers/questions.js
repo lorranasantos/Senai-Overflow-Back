@@ -9,6 +9,7 @@ module.exports = {
     const { title, description, image, gist, categories } = req.body;
 
     const categoriesArray = categories.split(",");
+    const { firebaseUrl } = req.file ? req.file : "";
 
     const { studentId } = req;
 
@@ -24,8 +25,8 @@ module.exports = {
       let question = await student.createQuestion({
         title,
         description,
-        image,
-        image: req.file.fileName,
+        image: firebase,
+        // image: req.file.filename,
         gist,
       });
 
