@@ -1,36 +1,39 @@
 const Student = require("../models/Student");
 const bcrypt = require("bcryptjs");
 const auth = require("../config/auth.json");
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+const { generateToken } = require("../util");
 
 module.exports = {
-    async store(req, res){
-        const {email, password} = req.body;
+  async store(req, res) {
+    const { email, password } = req.body;
 
-        try{
-            const student = await Student.findOne({
-                where:{
-                    email
-                }
-            });
-            if(!student || !bcrypt.compareSync(password, student.password))
-                return res.status(406).send({error:"usuário e/ou senha inválidos"});
-            
-            const token = jwt.sign({studentId: student.id, studentName: student.name}, auth.secret);
+    try {
+      const student = await Student.findOne({
+        where: {
+          email,
+        },
+      });
+      if (!student || !bcrypt.compareSync(password, student.password))
+        return res.status(406).send({ error: "usuário e/ou senha inválidos" });
 
-            res.status(201).send({
-                student:{
-                    studentId: student.id,
-                    name: student.name,
-                    ra: student.ra,
-                    email: student.email
-                },
-                token
-            });
+      const token = generateToken({
+        studentId: student.id,
+        studentName: student.name,
+      });
 
-        }catch (error){
-            console.log(error);
-            res.status(500).send(error);
-        }
+      res.status(201).send({
+        student: {
+          studentId: student.id,
+          name: student.name,
+          ra: student.ra,
+          email: student.email,
+        },
+        token,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send(error);
     }
-}
+  },
+};
