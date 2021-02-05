@@ -8,7 +8,16 @@ const { generateToken } = require("../util");
 
 module.exports = {
   //função que vai ser executada pela rota
-  async index(req, res) {},
+  async index(req, res) {
+    try {
+      const students = await Student.findAll();
+
+      res.status(200).send(students);
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ error });
+    }
+  },
 
   async store(req, res) {
     //receber os dados do body
@@ -66,13 +75,21 @@ module.exports = {
       attributes: ["id", "name", "ra", "email"],
     });
 
+    try {
+      if (!student)
+        return res.status(404).send({ erro: "Aluno não encontrado" });
+
+      res.status(200).send(student);
+    } catch (error) {
+      console.log(error);
+      res.status(500).send(error);
+    }
+
     //se o student não for encontrado, retornar o not found
     if (!student) return res.status(404).send({ erro: "Aluno não encontrado" });
 
     //Se o aluno encontrado retornar o aluno
-    delete aluno.senha;
-
-    res.send(aluno);
+    // delete aluno.senha;
   },
 
   async delete(req, res) {

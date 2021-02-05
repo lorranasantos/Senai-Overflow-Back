@@ -11,6 +11,7 @@ const authMiddleware = require("./middleware/authorization");
 const uploadQuestions = require("./middleware/uploadQuestions");
 const uploadImage = require("./services/firebase");
 
+const categoriesController = require("./controllers/categories");
 const studentController = require("./controllers/students");
 const questionController = require("./controllers/questions");
 const answersController = require("./controllers/answer");
@@ -49,7 +50,8 @@ routes.delete("/students/:id", studentController.delete);
 routes.put("/students/:id", studentController.update);
 
 // ROTAS DE questions
-routes.post("/questions",
+routes.post(
+  "/questions",
   //   Multer.single("image"),
   uploadQuestions,
   uploadImage,
@@ -68,5 +70,8 @@ routes.post(
 
 // ROTAS DO FEED
 routes.get("/feed", feedController.index);
+
+//Rotas de categorY
+routes.get("/categories", categoriesController.index);
 
 module.exports = routes;
