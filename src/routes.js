@@ -8,11 +8,12 @@ const multer = require("multer");
 // });
 
 const authMiddleware = require("./middleware/authorization");
-const uploadQuestions = require("./middleware/uploadQuestions");
+const uploadSingleImage = require("./middleware/uploadSingleImage");
 const uploadImage = require("./services/firebase");
 
 const categoriesController = require("./controllers/categories");
 const studentController = require("./controllers/students");
+const studentImageController = require("./controllers/studentImages");
 const questionController = require("./controllers/questions");
 const answersController = require("./controllers/answer");
 const feedController = require("./controllers/feed");
@@ -48,12 +49,17 @@ routes.get("/students/:id", studentController.find);
 routes.get("/students", studentController.index);
 routes.delete("/students/:id", studentController.delete);
 routes.put("/students/:id", studentController.update);
+routes.post(
+  "/students/:id/images",
+  uploadSingleImage,
+  uploadImage,
+  studentImageController.store
+);
 
 // ROTAS DE questions
 routes.post(
   "/questions",
-  //   Multer.single("image"),
-  uploadQuestions,
+  uploadSingleImage,
   uploadImage,
   questionValidator.create,
   questionController.store
