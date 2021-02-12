@@ -33,6 +33,8 @@ module.exports = {
           },
         ],
         order: [["created_at", "DESC"]],
+        limit: 5,
+        offset: 5,
       });
       res.send(feed);
     } catch {
