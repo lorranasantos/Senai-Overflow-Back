@@ -1,10 +1,65 @@
 const { update } = require("../models/Student");
 
+const { Op } = require("sequelize");
 const Question = require("../models/Question");
 const Student = require("../models/Student");
 
 module.exports = {
-  index(req, res) {},
+  async index(req, res) {
+    const { search } = req.query;
+
+    try {
+      const questions = await Question.findAll({
+        attributes: [
+          "id",
+          "title",
+          "description",
+          "image",
+          "gist",
+          "created_at",
+          "StudentId",
+        ],
+        include: [
+          {
+            association: "Student",
+            attributes: ["id", "name", "image"],
+          },
+          {
+            association: "Categories",
+            attributes: ["id", "description"],
+            through: { attributes: [] },
+          },
+          {
+            association: "Answers",
+            attributes: ["id", "description", "created_at"],
+            include: {
+              association: "Student",
+              attributes: ["id", "name", "image"],
+            },
+          },
+        ],
+        order: [["created_at", "DESC"]],
+        where: {
+          [Op.or]: [
+            {
+              title: {
+                [Op.substring]: search,
+              },
+            },
+            {
+              description: {
+                [Op.substring]: search,
+              },
+            },
+          ],
+        },
+      });
+      res.send(questions);
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("erro");
+    }
+  },
 
   async store(req, res) {
     const { title, description, gist, categories } = req.body;
@@ -26,7 +81,7 @@ module.exports = {
       let question = await student.createQuestion({
         title,
         description,
-        image: req.file.firebaseUrl,
+        image: req.file ? req.file.firebaseUrl : null,
         gist,
       });
 

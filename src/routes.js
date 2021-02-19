@@ -1,83 +1,66 @@
 const express = require("express");
 
-const multer = require("multer");
-
-// const Multer = multer({
-//   storage: multer.memoryStorage(),
-//   limits: 1020 * 1024 * 2,
-// });
-
 const authMiddleware = require("./middleware/authorization");
 const uploadSingleImage = require("./middleware/uploadSingleImage");
-const uploadImage = require("./services/firebase");
 
-const categoriesController = require("./controllers/categories");
 const studentController = require("./controllers/students");
-const studentImageController = require("./controllers/studentImages");
+const studentImagesController = require("./controllers/studentImages");
 const questionController = require("./controllers/questions");
-const answersController = require("./controllers/answer");
+const answerController = require("./controllers/answer");
 const feedController = require("./controllers/feed");
 const sessionController = require("./controllers/sessions");
+const categoriesController = require("./controllers/categories");
 
-const studentsValidator = require("./validators/students");
-const questionValidator = require("./validators/questions");
-const answerValidator = require("./validators/answers");
+const studentValidators = require("./validators/students");
+const questionValidators = require("./validators/questions");
+const answerValidators = require("./validators/answers");
+const uploadFirebase = require("./services/firebase");
 
 const routes = express.Router();
 
-// const upload = multer.single("arquivo");
-// routes.post("/upload", (req, res)=>{
-//    const handleError  = (error) => {
-//         if(error) {
-//             res.status(400).send({error: "Arquivo inválido"})
-//         }
-//         console.log(req.file);
-//         res.send(req.file);
-//     }
-//     upload(req, res, handleError);
-// });
-
-//configuração da rota
-// Rotas PÚBLICAS
+//rotas públicas
 routes.post("/sessions", sessionController.store);
-routes.post("/students", studentsValidator.create, studentController.store);
+routes.post("/students", studentValidators.create, studentController.store);
 
 routes.use(authMiddleware);
 
-//ROTAS DE students
-routes.get("/students/:id", studentController.find);
+//rotas privadas
+
+//rotas de alunos
 routes.get("/students", studentController.index);
+routes.get("/students/:id", studentController.find);
 routes.delete("/students/:id", studentController.delete);
 routes.put("/students/:id", studentController.update);
 routes.post(
   "/students/:id/images",
   uploadSingleImage,
-  uploadImage,
-  studentImageController.store
+  uploadFirebase,
+  studentImagesController.store
 );
 
-// ROTAS DE questions
+//rotas de perguntas
+routes.get("/questions", questionValidators.index, questionController.index);
 routes.post(
   "/questions",
   uploadSingleImage,
-  uploadImage,
-  questionValidator.create,
+  uploadFirebase,
+  questionValidators.create,
   questionController.store
 );
-routes.put("/questions/:id", questionController.update);
 routes.delete("/questions/:id", questionController.delete);
+routes.put("/questions/:id", questionController.update);
 
-// ROTAS DE RESPOSTAS
+//rotas de respostas
 routes.post(
   "/questions/:id/answers",
-  answerValidator.create,
-  answersController.store
+  answerValidators.create,
+  answerController.store
 );
 
-// ROTAS DO FEED
+//rotas do feed
 routes.get("/feed", feedController.index);
 
-//Rotas de categorY
+//rotas de categorias
 routes.get("/categories", categoriesController.index);
 
 module.exports = routes;
