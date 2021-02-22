@@ -4,6 +4,10 @@ const { errors } = require("celebrate");
 
 const cors = require("cors");
 
+require("dotenv").config();
+
+//console.log(process.env.TESTE);
+
 //importar as rotas
 const routes = require("./routes");
 

@@ -8,14 +8,13 @@ const Category = require("../models/Category");
 const Answer = require("../models/Answer");
 const { Sequelize } = require("sequelize");
 
-const cennection = new Sequelize(dbconfig);
+const cennection = new Sequelize(dbconfig.url, dbconfig.config);
 
 //inicializa os models
 Student.init(cennection);
 Question.init(cennection);
 Category.init(cennection);
 Answer.init(cennection);
-
 
 //inicializa os relacionamentos
 Student.associate(cennection.models);

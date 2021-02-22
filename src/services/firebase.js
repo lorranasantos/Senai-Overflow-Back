@@ -1,5 +1,5 @@
 const admin = require("firebase-admin");
-const serviceAccount = require("../config/firebase-key.json");
+const serviceAccount = require("../config/firebase-key");
 
 const BUCKET = "senai-overflow-36f5b.appspot.com";
 
@@ -23,10 +23,10 @@ const uploadImage = (req, res, next) => {
       contentType: image.mimeType,
     },
   });
-  stream.on("error",(error) => {
+  stream.on("error", (error) => {
     console.error(error);
 
-    res.status(500).send({error: "Erro ao subir para o firebase"})
+    res.status(500).send({ error: "Erro ao subir para o firebase" });
   });
   stream.on("finish", async () => {
     // Tornar o arquivo público
